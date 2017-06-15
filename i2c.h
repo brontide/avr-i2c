@@ -21,6 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _I2C_H
 #define _I2C_H
@@ -29,8 +32,8 @@
 #include <stdio.h>
 #include <util/twi.h>
 
-/* 100kHz */
-#define I2C_FREQ 100000
+/* 400kHz */
+#define I2C_FREQ 400000
 
 #define I2C_TXN_DONE _BV(0)
 #define I2C_TXN_ERR  _BV(1)
@@ -78,4 +81,8 @@ static inline void i2c_txn_init(i2c_txn_t *t, uint8_t opslen) {
 void i2c_init(void);
 void i2c_post(i2c_txn_t *t);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

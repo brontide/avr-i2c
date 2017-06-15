@@ -30,6 +30,7 @@
 
 #include "i2c.h"
 
+
 /* Pointers to current txn and op. */
 static volatile i2c_txn_t *txn;
 static volatile i2c_op_t *op;
@@ -235,10 +236,20 @@ next_op:
    * Advance to next operation in transaction, if possible.
    */
   if (++(txn->opspos) < txn->opslen) {
+    uint8_t current_address = op->address;
     op = &txn->ops[txn->opspos];
 
-    /* Repeated start. */
-    TWCR = TWCR_DEFAULT | _BV(TWINT) | _BV(TWSTA);
+    if (op->address == 0) {
+      /* 
+       * This buffer continues the existing operation
+       * do not issue a new start 
+       */
+      op->address = current_address;
+      op->bufpos = 0;
+    } else {
+      /* Repeated start  */
+      TWCR = TWCR_DEFAULT | _BV(TWINT) | _BV(TWSTA);
+    }
     return;
   }
 
@@ -264,3 +275,5 @@ next_txn:
   /* No more transaction, transmit STOP. */
   TWCR = TWCR_DEFAULT | _BV(TWINT) | _BV(TWSTO);
 }
+
+
